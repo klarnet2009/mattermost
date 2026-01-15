@@ -4,6 +4,7 @@
 package openldap
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"strings"
@@ -169,15 +170,21 @@ func (d *LdapDiagnosticImpl) connect(settings *model.LdapSettings) (*ldap.Conn, 
 		connectionSecurity = *settings.ConnectionSecurity
 	}
 
+	// Build TLS config with SkipCertificateVerification support
+	tlsConfig := &tls.Config{
+		ServerName:         server,
+		InsecureSkipVerify: settings.SkipCertificateVerification != nil && *settings.SkipCertificateVerification,
+	}
+
 	switch strings.ToUpper(connectionSecurity) {
 	case "TLS":
-		return ldap.DialTLS("tcp", address, nil)
+		return ldap.DialTLS("tcp", address, tlsConfig)
 	case "STARTTLS":
 		conn, err := ldap.Dial("tcp", address)
 		if err != nil {
 			return nil, err
 		}
-		if err := conn.StartTLS(nil); err != nil {
+		if err := conn.StartTLS(tlsConfig); err != nil {
 			conn.Close()
 			return nil, err
 		}
