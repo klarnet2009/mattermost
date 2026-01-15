@@ -14,6 +14,8 @@ import (
 
 	// Enterprise Imports
 	_ "github.com/mattermost/mattermost/server/v8/enterprise"
+	// Open-source LDAP implementation
+	_ "github.com/mattermost/mattermost/server/v8/openldap"
 )
 
 func main() {
