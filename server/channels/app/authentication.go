@@ -399,8 +399,8 @@ func checkUserNotBot(user *model.User) *model.AppError {
 }
 
 func (a *App) authenticateUser(rctx request.CTX, user *model.User, password, mfaToken string) (*model.User, *model.AppError) {
-	license := a.Srv().License()
-	ldapAvailable := *a.Config().LdapSettings.Enable && a.Ldap() != nil && license != nil && *license.Features.LDAP
+	// Open-source LDAP: removed license check
+	ldapAvailable := *a.Config().LdapSettings.Enable && a.Ldap() != nil
 
 	if user.AuthService == model.UserAuthServiceLdap {
 		if !ldapAvailable {

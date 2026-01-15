@@ -194,7 +194,8 @@ func (a *App) DoLogin(rctx request.CTX, w http.ResponseWriter, r *http.Request, 
 
 	rctx = rctx.WithSession(session)
 
-	if a.Srv().License() != nil && *a.Srv().License().Features.LDAP && a.Ldap() != nil {
+	// Open-source LDAP: removed license check
+	if *a.Config().LdapSettings.Enable && a.Ldap() != nil {
 		userVal := *user
 		sessionVal := *session
 		a.Srv().Go(func() {
